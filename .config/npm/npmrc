@@ -1,0 +1,7 @@
+cache=${XDG_CACHE_HOME}/npm
+tmp=${XDG_RUNTIME_DIR}/npm
+init-module=${XDG_CONFIG_HOME}/npm/config/npm-init.js
+
+init.author.name=Preston Locke
+init.author.email=locke_preston@yahoo.com
+init.author.url=https://prestonlocke.net/

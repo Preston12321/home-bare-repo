@@ -1,0 +1,50 @@
+" Settings chosen largely from example file
+" at https://vim.fandom.com/wiki/Example_vimrc
+
+" NOTE: KEEP THIS ON FIRST LINE! RESETS OTHER SETTINGS!
+set nocompatible
+
+" Keep home directory clean
+set undodir=$XDG_DATA_HOME/vim/undo
+set directory=$XDG_DATA_HOME/vim/swap
+set backupdir=$XDG_DATA_HOME/vim/backup
+set viewdir=$XDG_DATA_HOME/vim/view
+set runtimepath=$XDG_CONFIG_HOME/vim,$VIMRUNTIME,$XDG_CONFIG_HOME/vim/after
+
+if !has('nvim')
+    set viminfo='1000,n$XDG_DATA_HOME/vim/viminfo
+endif
+
+filetype indent plugin on
+
+syntax on
+
+set hidden
+
+set wildmenu
+set showcmd
+set cmdheight=2
+
+set hlsearch
+
+set backspace=indent,eol,start
+
+set autoindent
+set nostartofline
+set nowrap
+
+set ruler
+
+set confirm
+set visualbell
+
+set number
+set relativenumber
+
+" Quickly time out on keycodes, but never time out on mappings
+set notimeout ttimeout ttimeoutlen=200
+
+set shiftwidth=4
+set softtabstop=4
+set expandtab
+

@@ -1,0 +1,9 @@
+[user]
+	signingkey = 7F0245F5717C24A2
+	name = Preston Locke
+	email = locke_preston@yahoo.com
+	username = Preston12321
+[commit]
+	gpgsign = true
+[credential]
+	helper = /usr/local/bin/pass-git-helper

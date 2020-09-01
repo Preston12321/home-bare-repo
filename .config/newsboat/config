@@ -1,0 +1,15 @@
+auto-reload yes
+bind-key j down
+bind-key k up
+color listfocus white red
+color listfocus_unread white red bold
+download-path "~/Downloads/newsboat"
+goto-next-feed no
+player vlc
+refresh-on-startup yes
+reload-threads 2
+reload-time 5
+save-path "~/Downloads/newsboat"
+show-keymap-hint no
+show-title-bar no
+# wrap-scroll yes
