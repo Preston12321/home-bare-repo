@@ -1,0 +1,21 @@
+#!/bin/bash
+
+vmname=COMP-240-lab1
+vmaddr=192.168.56.101
+vmuser=seed
+vmpass=dees
+
+retrynum=5
+retryint=2
+
+# Start the headless lab VM
+VBoxHeadless -s $vmname >/dev/null &
+disown
+
+echo 'Starting the VM. This may take a while...'
+
+# Give the VM time to start up
+sleep 10
+
+# Connect to VM via SSH, retrying upon failure
+sshpass -f <(printf '%s\n' $vmpass) ssh $vmuser@$vmaddr -o ConnectionAttempts=$retrynum -o ConnectTimeout=$retryint

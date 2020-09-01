@@ -1,0 +1,68 @@
+#!/bin/bash
+
+STORE_DIR="${PASSWORD_STORE_DIR:-$HOME/.password-store}"
+REGEX_USERNAME="(user(name)?|e-?mail|log-?in|sign-?in|phone( number)?)"
+ACTION_CANCEL="Cancel"
+ACTION_COPY_USERNAME="Copy Username"
+ACTION_COPY_PASSWORD="Copy Password"
+
+showPrompt() {
+    printf "$2" | rofi -dmenu -i -p "$1"
+}
+
+# Get a list of all the files under the password store directory
+listing=$(find "$STORE_DIR" | tail -n +2)
+
+# Strip out the store directory from the beginning of each path
+stripped=""
+while IFS= read -r line; do
+   stripped+=${line#$STORE_DIR/}
+   stripped+=$'\n'
+done <<< "$listing"
+stripped=${stripped%$'\n'}
+
+choices=$(
+    echo "$stripped" |
+
+    # Remove '.gpg' from the end of each path
+    grep -o -P ".+(?=\.gpg$)" |
+
+    sort
+)
+
+entry=$(showPrompt "Entry" "$choices")
+
+[ -z "$entry" ] && exit 0
+
+action=$(showPrompt "Action" "$ACTION_COPY_USERNAME\n$ACTION_COPY_PASSWORD\n$ACTION_CANCEL")
+
+[ -z "$action" ] && exit 0
+
+if [ "$action" == "$ACTION_COPY_USERNAME" ]; then
+    output=$(pass show "$entry") 
+
+    user=$(
+        echo "$output" |
+
+        # Get only lines that contain a username-related field
+        grep -i -P "^$REGEX_USERNAME:" |
+
+        # Assume the first username-related field is the username
+        head -n 1 |
+
+        # Filter out the field name to get the value by itself
+        sed -E "s/^$REGEX_USERNAME: //I"
+    )
+
+    # If no matching email/username lines in file, assume filename is username
+    [ -z "$user" ] && user=$(echo "$entry" | grep -o -P "[^/]+$")
+
+    echo -n "$user" | xclip -selection clipboard
+
+    notify-send "Copied Username" "Copied '$user' to clipboard"
+elif [ "$action" == "$ACTION_COPY_PASSWORD" ]; then
+    pass -c "$entry"
+
+    notify-send "Copied Password for $entry" "Clearing clipboard in 45 seconds..."
+fi
+

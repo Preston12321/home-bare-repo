@@ -1,0 +1,7 @@
+#!/bin/bash
+
+systemctl --user start spotifyd.service
+
+spt
+
+systemctl --user stop spotifyd.service

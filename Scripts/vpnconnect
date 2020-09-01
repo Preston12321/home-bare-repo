@@ -1,0 +1,3 @@
+#!/bin/sh
+
+globalprotect connect -portal vpn.macalester.edu

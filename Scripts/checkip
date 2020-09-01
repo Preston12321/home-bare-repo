@@ -1,0 +1,100 @@
+#!/bin/bash
+
+HOSTSFILE="/etc/hosts"
+CONFIGFILE=""
+
+if [ "$CHECKIP_CONFIG_HOME" != "" ]; then
+    CONFIGFILE="$CHECKIP_CONFIG_HOME/hosts.conf"
+elif [ "$XDG_CONFIG_HOME" != "" ]; then
+    CONFIGFILE="$XDG_CONFIG_HOME/checkip/hosts.conf"
+else
+    CONFIGFILE="$HOME/.config/checkip/hosts.conf"
+fi
+
+# Check if file exists and has readable text data
+if [ ! -e $CONFIGFILE ]; then
+    echo "Error: File '$CONFIGFILE' does not exist"
+    exit 1
+fi
+
+if [ ! -f $CONFIGFILE ]; then
+    echo "Error: File '$CONFIGFILE' is not a regular file"
+    exit 1
+fi
+
+if [ ! -s $CONFIGFILE ]; then
+    echo "Error: File '$CONFIGFILE' is empty"
+    exit 1
+fi
+
+if [ ! -r $CONFIGFILE ]; then
+    echo "Error: File '$CONFIGFILE' is not readable"
+    exit 1
+fi
+
+hostnames=()
+addresses=()
+while IFS="" read -r line || [ -n "$line" ]
+do
+    line=$(echo "$line" | grep -P "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\t.+$")
+    if [ ! "$line" = "" ]; then
+        hostnames+=( $(echo "$line" | grep -P -o "(?<=\t).+$") )
+        addresses+=( $(echo "$line" | grep -P -o "^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}") )
+    else
+        echo "Warning: Ignoring bad line in file '$CONFIGFILE': '$line'"
+    fi
+done < $CONFIGFILE
+
+echo "Getting public IP of local machine..."
+myip=$(curl -s ifconfig.me)
+
+for i in ${!hostnames[@]}; do
+
+    hostname=${hostnames[$i]}
+    internalip=${addresses[$i]}
+
+    echo "Resolving public IP of $hostname..."
+    serverip=$(dig @8.8.8.8 $hostname +noquestion +yaml | grep -P -o "(?<=IN A ).*")
+
+    if [ "$myip" = "$serverip" ]; then
+        echo "Local IP and server IP are the same"
+        echo "Pointing domain in $HOSTSFILE to internal IP address..."
+        useinternal=true
+    else
+        echo "Local IP and server IP are different"
+        echo "Pointing domain in $HOSTSFILE to public IP address..."
+        useinternal=false
+    fi
+
+    if [ "$useinternal" = true ]; then
+        entry="$internalip\t$hostname"
+    else
+        entry="# $internalip\t$hostname"
+    fi
+
+    if [ ! -r $CONFIGFILE ]; then
+        echo "Error: File '$HOSTSFILE' is not readable"
+        exit 2
+    fi
+
+    if [ ! -w $CONFIGFILE ]; then
+        echo "Error: File '$HOSTSFILE' is not writeable"
+        exit 2
+    fi
+
+    FORMAT="^(#[ \t]*)?$internalip\t$hostname$"
+    line=$(grep -P "$FORMAT" $HOSTSFILE)
+
+    if [ "$line" = "" ]; then
+        if [ "$useinternal" = true ]; then
+            # Add new entry to top of file
+            sed -i "1s/^/$entry\n/" $HOSTSFILE
+        fi
+    else
+        if [ ! "$line" = "$entry" ]; then
+            # Modify preexisting entry
+            sed -i -E "s/$FORMAT/$entry/" $HOSTSFILE
+        fi
+    fi
+
+done

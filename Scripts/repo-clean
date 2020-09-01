@@ -1,0 +1,35 @@
+#!/bin/bash
+
+dirs=$(ls -QAlF | grep '/$')
+
+while IFS="" read -r line; do
+    dir=${line##* \"}
+    dir=${dir%\"/}
+    # echo "$dir"
+
+    # TODO: Figure out problem with un-pushed commit detection
+    git="git --git-dir=\"$dir/.git\" --work-tree=\"$dir\""
+    gsout=$($git status -s 2>/dev/null)
+    gsoutwitherr=$($git status -s 2>&1)
+    gcout=$($git cherry -v 2>/dev/null)
+
+    changes="false"
+
+    # Check if there are any staged/unstaged changes in the repo
+    if [ -n "$gsout" ]; then
+        changes="true"
+    else
+        # Skip directory if it's not a git repo
+        [ -n "$gsoutwitherr" ] && continue
+    fi
+
+    # Check if there are any un-pushed commits in the repo
+    if [ -n "$gcout" ]; then
+        changes="true"
+    fi
+
+    if [ "$changes" == "false" ]; then
+        # rm -rf "$dir"
+        echo "Removing '$dir'"
+    fi
+done <<< "$dirs"
