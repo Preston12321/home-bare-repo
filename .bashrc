@@ -63,4 +63,5 @@ if [ -f "$GOPATH/bin/powerline-go" ]; then
 fi
 
 # Show cool PC info when terminal opens
-neofetch
+path=$(command -v neofetch) # Gets path of neofetch, if it exists
+[ -z "$path" ] || neofetch # Checks for non-empty path before running
