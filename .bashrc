@@ -57,7 +57,10 @@ fi
 function _update_ps1() {
     PS1="$(powerline-go -error $? -cwd-max-depth 2 -cwd-max-dir-size 10 -modules venv,cwd,perms,git,time,hg,jobs,exit)"
 }
-PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
+
+if [ -f "$GOPATH/bin/powerline-go" ]; then
+    PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
+fi
 
 # Show cool PC info when terminal opens
 neofetch
