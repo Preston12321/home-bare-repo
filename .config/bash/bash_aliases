@@ -29,6 +29,7 @@ alias less='less -R'
 # Config file shortcuts
 alias cfb='$EDITOR $HOME/.bashrc'
 alias cfp='$EDITOR $HOME/.profile'
+alias cfbp='$EDITOR $HOME/.profile'
 alias cfn='$EDITOR $XDG_CONFIG_HOME/newsboat/urls'
 alias cfba='$EDITOR $XDG_CONFIG_HOME/bash/bash_aliases'
 
