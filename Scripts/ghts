@@ -1,0 +1,17 @@
+#!/bin/bash
+
+URL=$(git remote get-url origin)
+
+if [ "${URL:0:4}" == "git@" ]; then
+    echo "Repository is already using the SSH remote"
+    exit 1
+fi
+
+URL=$(echo "$URL" | grep -oP "(?<=^https://).*")
+URL_DOMAIN=$(echo "$URL" | grep -oP "^[^/]*(?=/)")
+URL_PATH=$(echo "$URL" | grep -oP "(?<=/).*$")
+
+git remote rm origin
+git remote add origin "git@$URL_DOMAIN:$URL_PATH"
+git fetch origin master
+git branch --set-upstream-to=origin/master master
