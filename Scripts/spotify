@@ -1,5 +1,6 @@
 #!/bin/bash
 
-systemctl --user is-active spotifyd.service || systemctl --user start spotifyd.service
+# If spotifyd service isn't running, start it
+systemctl --user is-active --quiet spotifyd.service || systemctl --user start spotifyd.service
 
 spt
