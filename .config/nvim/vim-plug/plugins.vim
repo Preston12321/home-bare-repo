@@ -21,5 +21,9 @@ call plug#begin('~/.config/nvim/autoload/plugged')
     " Airline status bar
     Plug 'vim-airline/vim-airline'
     Plug 'vim-airline/vim-airline-themes'
+    " Commenting!!!
+    Plug 'tpope/vim-commentary'
+    " Git file changes displayed in gutter
+    Plug 'mhinz/vim-signify'
 
 call plug#end()

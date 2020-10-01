@@ -8,7 +8,8 @@ nnoremap <M-k>    :resize +2<CR>
 nnoremap <M-h>    :vertical resize -2<CR>
 nnoremap <M-l>    :vertical resize +2<CR>
 
-" I hate escape more than anything else
+" Alternate way to return to normal mode
+" Just mash j and k
 inoremap jk <Esc>
 inoremap kj <Esc>
 
@@ -25,8 +26,6 @@ nnoremap <S-TAB> :bprevious<CR>
 nnoremap <C-s> :w<CR>
 " Alternate way to quit
 nnoremap <C-Q> :wq!<CR>
-" Use control-c instead of escape
-nnoremap <C-c> <Esc>
 " <TAB>: completion.
 inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
 
@@ -42,3 +41,7 @@ nnoremap <C-l> <C-w>l
 
 nnoremap <Leader>o o<Esc>^Da
 nnoremap <Leader>O O<Esc>^Da
+
+" Comment out selected lines
+nnoremap <space>/ :Commentary<CR>
+vnoremap <space>/ :Commentary<CR>
