@@ -25,6 +25,7 @@ alias gl='git log'
 alias c='clear'
 alias update='sudo apt update && sudo apt upgrade'
 alias less='less -R'
+alias vim='nvim'
 
 # Config file shortcuts
 alias cfb='$EDITOR $HOME/.bashrc'
