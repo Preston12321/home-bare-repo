@@ -53,12 +53,16 @@ fi
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
-# Custom prompt using powerline-go
-function _update_ps1() {
-    PS1="$(powerline-go -error $? -cwd-max-depth 2 -cwd-max-dir-size 10 -modules venv,cwd,perms,git,time,hg,jobs,exit)"
-}
 
-if [ -f "$GOPATH/bin/powerline-go" ]; then
+if [ -f "$HOME/.local/bin/trueline.sh" ]; then
+    source $XDG_CONFIG_HOME/trueline/extensions.bash
+    source $XDG_CONFIG_HOME/trueline/settings.bash
+    source $HOME/.local/bin/trueline.sh
+elif [ -f "$GOPATH/bin/powerline-go" ]; then
+    # Custom prompt using powerline-go
+    function _update_ps1() {
+        PS1="$(powerline-go -error $? -cwd-max-depth 2 -cwd-max-dir-size 10 -modules venv,cwd,perms,git,time,hg,jobs,exit)"
+    }
     PROMPT_COMMAND="_update_ps1; $PROMPT_COMMAND"
 fi
 
