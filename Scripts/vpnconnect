@@ -1,3 +1,15 @@
-#!/bin/sh
+#!/bin/bash
 
-globalprotect connect -portal vpn.macalester.edu
+# Use VPN-provided DNS servers when using openconnect
+sudo rm -f /etc/resolv.conf
+sudo ln -s /run/resolvconf/resolv.conf /etc/resolv.conf
+sudo systemctl restart resolvconf
+
+sudo openconnect -q --protocol=gp vpn.macalester.edu
+
+# Restore original DNS settings
+sudo rm -f /etc/resolv.conf
+sudo ln -s /run/systemd/resolve/resolv.conf /etc/resolv.conf
+sudo systemctl restart resolvconf
+
+# globalprotect connect -portal vpn.macalester.edu
